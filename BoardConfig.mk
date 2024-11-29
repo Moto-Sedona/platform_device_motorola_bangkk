@@ -23,7 +23,7 @@ include device/motorola/sm6375-common/BoardConfigCommon.mk
 TARGET_BOOTLOADER_BOARD_NAME := bangkk
 
 # Display
-TARGET_SCREEN_DENSITY := 280
+TARGET_SCREEN_DENSITY := 400
 
 # Kernel
 BOARD_KERNEL_CMDLINE += androidboot.hab.product=bangkk
