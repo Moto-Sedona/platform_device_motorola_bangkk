@@ -91,6 +91,17 @@
         <item>255</item>
     </array>
 
+   <array name="config_autoBrightnessLcdBacklightValues">
+        <item>10</item>
+        <item>20</item>
+        <item>40</item>
+        <item>70</item>
+        <item>110</item>
+        <item>160</item>
+        <item>200</item>
+        <item>255</item>
+    </array>
+
     <!-- An array of floats describing the screen brightness in nits corresponding to the backlight
          values in the config_screenBrightnessBacklight array.  On OLED displays these  values
          should be measured with an all white image while the display is in the fully on state.
@@ -114,6 +125,11 @@
         <item>800</item>
         <item>1000</item>
     </array>
+
+    <!-- Screen brightness used to dim the screen while dozing in a very low power state.
+         May be less than the minimum allowed brightness setting
+         that can be set by the user. -->
+    <integer name="config_screenBrightnessDoze">17</integer>
 
     <!-- Stability requirements in milliseconds for accepting a new brightness level.  This is used
          for debouncing the light sensor.  Different constants are used to debounce the light sensor
@@ -144,7 +160,7 @@
 
          @see https://www.w3.org/TR/SVG/paths.html#PathData
          -->
-    <string translatable="false" name="config_mainBuiltInDisplayCutout">M -28,0 L 28,0 L 28,77 L -28,77 Z</string>
+    <string translatable="false" name="config_mainBuiltInDisplayCutout">M -38,0 L 38,0 L 38,106 L -38,106 Z</string>
 
 	<!-- Indicate whether to allow the device to suspend when the screen is off
          due to the proximity sensor.  This resource should only be set to true
@@ -161,7 +177,7 @@
          If a non-zero value is set for config_defaultPeakRefreshRate, then
          config_defaultRefreshRate may be set to 0, in which case the value set for
          config_defaultPeakRefreshRate will act as the default frame rate. -->
-    <integer name="config_defaultRefreshRate">0</integer>
+    <integer name="config_defaultRefreshRate">120</integer>
 
     <!-- The default peak refresh rate for a given device. Change this value if you want to prevent
          the framework from using higher refresh rates, even if display modes with higher refresh
@@ -216,22 +232,40 @@
     -->
     <bool name="config_powerDecoupleInteractiveModeFromDisplay">true</bool>
 
-    <!-- The properties of a UDFPS sensor in pixels, in the order listed below: -->
-    <integer-array name="config_udfps_sensor_props" translatable="false" >
-        <item>540</item> <!-- sensorLocationX -->
-        <item>2168</item> <!-- sensorLocationY -->
-        <item>91</item> <!-- sensorRadius -->
-    </integer-array>
+    <!-- Doze: does this device support STATE_DOZE?  -->
+    <bool name="doze_display_state_supported">false</bool>
+
+    <!-- Doze: does this device support STATE_DOZE_SUSPEND?  -->
+    <bool name="doze_suspend_display_state_supported">false</bool>
 
     <!-- Screen brightness used to dim the screen when the user activity
          timeout expires.  May be less than the minimum allowed brightness setting
          that can be set by the user. -->
     <item name="config_screenBrightnessDimFloat" format="float" type="dimen">0.03418803</item>
 
-    <!-- Minimum screen brightness setting allowed by the power manager.
-         The user is forbidden from setting the brightness below this level. -->
-    <item name="config_screenBrightnessSettingMinimumFloat" format="float" type="dimen">0.03418803</item>
-    
+    <!-- Default screen brightness setting.
+         Must be in the range specified by minimum and maximum. -->
+    <integer name="config_screenBrightnessSettingDefault">102</integer>
+
+    <!-- The display uses different gamma curves for different refresh rates. It's hard for panel
+         vendor to tune the curves to have exact same brightness for different refresh rate. So
+         flicker could be observed at switch time. The issue is worse at the gamma lower end.
+         In addition, human eyes are more sensitive to the flicker at darker environment.
+         To prevent flicker, we only support higher refresh rates if the display brightness is above
+         a threshold. And the darker environment could have higher threshold.
+         For example, no higher refresh rate if
+         display brightness <= disp0 && ambient brightness <= amb0
+         || display brightness <= disp1 && ambient brightness <= amb1
+    -->
+    <integer-array name="config_brightnessThresholdsOfPeakRefreshRate">
+        <item>77</item> <!-- 33% UI brightness -->
+        <item>62</item> <!-- 40% UI brightness -->
+    </integer-array>
+    <integer-array name="config_ambientThresholdsOfPeakRefreshRate">
+        <item>-1</item>
+        <item>70</item>
+    </integer-array>
+
     <!-- Default refresh rate in the zone defined by brightness and ambient thresholds.
          If non-positive, then the refresh rate is unchanged even if thresholds are configured. -->
     <integer name="config_defaultRefreshRateInZone">90</integer>
@@ -241,22 +275,41 @@
          Must be in the range specified by minimum and maximum. -->
     <item name="config_screenBrightnessSettingDefaultFloat" format="float" type="dimen">0.42911446</item>
 
+    <!-- Minimum screen brightness setting allowed by the power manager.
+         The user is forbidden from setting the brightness below this level. -->
+    <item name="config_screenBrightnessSettingMinimumFloat" format="float" type="dimen">0.03418803</item>
+
     <!-- Vibrator pattern for feedback about a long screen/key press -->
     <array name="config_longPressVibePattern">
         <item>0</item>
-        <item>60</item>
+        <item>45</item>
     </array>
 
     <!-- Vibrator pattern for feedback about touching a virtual key -->
     <array name="config_virtualKeyVibePattern">
         <item>0</item>
-        <item>50</item>
+        <item>45</item>
+    </array>
+
+    <!-- Vibrator pattern for a very short but reliable vibration for soft keyboard tap -->
+    <array name="config_keyboardTapVibePattern">
+        <item>0</item>
+        <item>30</item>
     </array>
 
     <!-- Vibrator pattern for feedback about booting with safe mode enabled -->
-    <array name="config_clockTickVibePattern">
+    <array name="config_safeModeEnabledVibePattern">
         <item>0</item>
-        <item>40</item>
+        <item>0</item>
+        <item>94</item>
+    </array>
+
+    <!-- Vibrator pattern for feedback about hitting a scroll barrier -->
+    <array name="config_scrollBarrierVibePattern">
+        <item>0</item>
+        <item>15</item>
+        <item>30</item>
+        <item>15</item>
     </array>
 
     <!-- ComponentName of a dream to show whenever the system would otherwise have
@@ -269,14 +322,25 @@
          Doze dreams will run whenever the power manager is in a dozing state. -->
     <string name="config_dozeComponent">com.android.systemui/com.android.systemui.doze.DozeService</string>
 
+    <!-- If true, the doze component is not started until after the screen has been
+         turned off and the screen off animation has been performed. -->
+    <bool name="config_dozeAfterScreenOffByDefault">true</bool>
+
     <!-- Whether the always on display mode is available. This should only be enabled
          on devices where the display has been tuned to be power efficient in DOZE and/or
          DOZE_SUSPEND states. -->
-    <bool name="config_dozeAlwaysOnDisplayAvailable">false</bool>
+    <bool name="config_dozeAlwaysOnDisplayAvailable">true</bool>
 
     <!-- Control whether the always on display mode is enabled by default. This value will be used
          during initialization when the setting is still null. -->
     <bool name="config_dozeAlwaysOnEnabled">false</bool>
+
+    <!-- The properties of a UDFPS sensor in pixels, in the order listed below: -->
+    <integer-array name="config_udfps_sensor_props" translatable="false" >
+        <item>540</item> <!-- sensorLocationX -->
+        <item>2168</item> <!-- sensorLocationY -->
+        <item>91</item> <!-- sensorRadius -->
+    </integer-array>
 
     <!-- MMS user agent string -->
     <string name="config_mms_user_agent" translatable="false">motog845g</string>
@@ -288,4 +352,14 @@
 
     <!-- Whether the device enable the non-standalone (NSA) mode of 5G NR.-->
     <bool name="config_telephony5gNonStandalone">true</bool>
+
+    <!-- Number of physical SIM slots on the device. This includes both eSIM and pSIM slots, and
+         is not necessarily the same as the number of phones/logical modems supported by the device.
+         For example, a multi-sim device can have 2 phones/logical modems, but 3 physical slots,
+         or a single SIM device can have 1 phones/logical modems, but 2 physical slots (one eSIM
+         and one pSIM) -->
+    <integer name="config_num_physical_slots">2</integer>
+
+    <!-- Whether devices suports in-display fingerprint when screen is off -->
+    <bool name="config_supportScreenOffUdfps">true</bool>
 </resources>

@@ -23,7 +23,9 @@ PRODUCT_AAPT_PREF_CONFIG := 280dpi
 
 # Resource Overlays
 PRODUCT_PACKAGES += \
+    ApertureOverlayBangkk \
     FrameworksResBangkk \
+    LineageSystemUIBangkk \
     SettingsProviderResBangkk \
     SettingsResBangkk \
     SystemUIResBangkk
