@@ -54,9 +54,9 @@ BOARD_MOTOROLA_DYNAMIC_PARTITIONS_SIZE := 5901385728 # ((SUPER_PARTITION_SIZE / 
 BOARD_SUPER_PARTITION_SIZE := 5905580032
 
 # Properties
-TARGET_SYSTEM_PROP += $(DEVICE_PATH)/properties/system.prop
-TARGET_VENDOR_PROP += $(DEVICE_PATH)/properties/vendor.prop
-TARGET_PRODUCT_PROP += $(DEVICE_PATH)/properties/product.prop
+TARGET_SYSTEM_PROP += $(DEVICE_PATH)/configs/props/system.prop
+TARGET_VENDOR_PROP += $(DEVICE_PATH)/configs/props/vendor.prop
+TARGET_PRODUCT_PROP += $(DEVICE_PATH)/configs/props/product.prop
 
 # Recovery
 TARGET_RECOVERY_UI_MARGIN_HEIGHT := 90
