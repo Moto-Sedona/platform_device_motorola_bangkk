@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+TARGET_HAS_FM := true
+
 # Inherit from motorola sm6375-common
 $(call inherit-product, device/motorola/sm6375-common/common.mk)
 
