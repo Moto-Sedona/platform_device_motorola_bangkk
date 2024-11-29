@@ -23,14 +23,10 @@ PRODUCT_AAPT_PREF_CONFIG := 280dpi
 
 # Resource Overlays
 PRODUCT_PACKAGES += \
-    FrameworksResFogos \
-    SettingsOverlayXT2363-1 \
-    SettingsOverlayXT2363-2 \
-    SettingsOverlayXT2363-3 \
-    SettingsOverlayXT2363-5 \
-    SettingsProviderResFogos \
-    SettingsResFogos \
-    SystemUIResFogos
+    FrameworksResBangkk \
+    SettingsProviderResBangkk \
+    SettingsResBangkk \
+    SystemUIResBangkk
 
 # Camera
 PRODUCT_PACKAGES += \
@@ -38,14 +34,14 @@ PRODUCT_PACKAGES += \
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint@2.1.vendor \
+    android.hardware.biometrics.fingerprint@2.3-service.bangkk \
     com.motorola.hardware.biometric.fingerprint@1.0.vendor
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/idc/uinput-fpc.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/uinput-fpc.idc \
-    $(LOCAL_PATH)/configs/idc/uinput_nav.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/uinput_nav.idc \
-    $(LOCAL_PATH)/configs/keylayout/uinput-fpc.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/uinput-fpc.kl \
-    $(LOCAL_PATH)/configs/keylayout/uinput_nav.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/uinput_nav.kl
+    $(LOCAL_PATH)/configs/keylayout/fts_ts.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/fts_ts.kl \
+    $(LOCAL_PATH)/configs/keylayout/goodix_ts.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/goodix_ts.kl \
+    $(LOCAL_PATH)/configs/keylayout/ReadyForAirRemote_Consumer_Control.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/ReadyForAirRemote_Consumer_Control.kl \
+    $(LOCAL_PATH)/configs/keylayout/ReadyForAirRemote_Keyboard.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/ReadyForAirRemote_Keyboard.kl
 
 # NFC
 PRODUCT_PACKAGES += \
@@ -68,4 +64,4 @@ $(foreach f,$(wildcard $(LOCAL_PATH)/rootdir/bin/*.sh),\
         $(eval PRODUCT_COPY_FILES += $(f):$(TARGET_COPY_OUT_VENDOR)/bin/$(notdir $f)))
         
 # Inherit from vendor blobs
-$(call inherit-product, vendor/motorola/fogos/fogos-vendor.mk)
+$(call inherit-product, vendor/motorola/bangkk/bangkk-vendor.mk)

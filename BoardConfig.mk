@@ -14,21 +14,21 @@
 # limitations under the License.
 #
 
-DEVICE_PATH := device/motorola/fogos
+DEVICE_PATH := device/motorola/bangkk
 
 # Inherit from motorola sm6375-common
 include device/motorola/sm6375-common/BoardConfigCommon.mk
 
 # Bootloader
-TARGET_BOOTLOADER_BOARD_NAME := fogos
+TARGET_BOOTLOADER_BOARD_NAME := bangkk
 
 # Display
 TARGET_SCREEN_DENSITY := 280
 
 # Kernel
-BOARD_KERNEL_CMDLINE += androidboot.hab.product=fogos
-TARGET_KERNEL_CONFIG := vendor/fogos-qgki-inline_defconfig
-TARGET_KERNEL_SOURCE := kernel/motorola/fogos
+BOARD_KERNEL_CMDLINE += androidboot.hab.product=bangkk
+TARGET_KERNEL_CONFIG := vendor/bangkk_defconfig
+TARGET_KERNEL_SOURCE := kernel/motorola/bangkk
 
 # Kernel Modules
 BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/configs/modules.load))
@@ -52,4 +52,4 @@ TARGET_RECOVERY_UI_MARGIN_HEIGHT := 90
 VENDOR_SECURITY_PATCH := 2024-09-01
 
 # inherit from the proprietary version
-include vendor/motorola/fogos/BoardConfigVendor.mk
+include vendor/motorola/bangkk/BoardConfigVendor.mk

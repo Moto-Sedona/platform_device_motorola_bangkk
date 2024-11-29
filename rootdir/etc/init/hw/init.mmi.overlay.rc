@@ -2,15 +2,17 @@
 import /vendor/etc/init/hw/init.nfc.sec.rc
 
 on post-fs
-    # "Tap to wake" gesture
-    chown root input /sys/class/sensors/dt-gesture/enable
-    chmod 0660 /sys/class/sensors/dt-gesture/enable
-    chown root input /sys/class/sensors/dt-gesture/poll_delay
-    chmod 0660 /sys/class/sensors/dt-gesture/poll_delay
+   # "Tap to wake" gesture
+   chown root input /sys/class/sensors/dt-gesture/enable
+   chmod 0660 /sys/class/sensors/dt-gesture/enable
+   chown root input /sys/class/sensors/dt-gesture/poll_delay
+   chmod 0660 /sys/class/sensors/dt-gesture/poll_delay
 
 on post-fs
-    chown system system /sys/devices/platform/soc/4804000.ufshc/clkgate_enable
-    chown system system /sys/devices/platform/soc/4804000.ufshc/devfreq/4804000.ufshc/min_freq
+   chown system system /sys/devices/platform/soc/4804000.ufshc/clkgate_enable
+   chown system system /sys/devices/platform/soc/4804000.ufshc/devfreq/4804000.ufshc/min_freq
+
+
 
 on post-fs-data
 
@@ -25,11 +27,11 @@ on post-fs-data
     # change permission for stylus
     chown system system /sys/class/touchscreen/primary/palm_settings
 
-    # Change ownership and permission for bq25960-standalone factory testing
-    chown system system /sys/class/power_supply/bq25960-standalone/voltage_now
-    chown system system /sys/bus/iio/devices/iio:device6/in_index_bq25980_cp_enabled_input
-    chmod 0644 /sys/class/power_supply/bq25960-standalone/voltage_now
-    chmod 0664 /sys/bus/iio/devices/iio:device6/in_index_bq25980_cp_enabled_input
+  # Change ownership and permission for bq25960-standalone factory testing
+  chown system system /sys/class/power_supply/bq25960-standalone/voltage_now
+  chown system system /sys/bus/iio/devices/iio:device6/in_index_bq25980_cp_enabled_input
+  chmod 0644 /sys/class/power_supply/bq25960-standalone/voltage_now
+  chmod 0664 /sys/bus/iio/devices/iio:device6/in_index_bq25980_cp_enabled_input
 
     # Add for Egis Fod fingerprint
     mkdir /data/vendor/egis 0770 system system
@@ -43,6 +45,9 @@ on post-fs-data
     # Add for OIS hall test result
     mkdir /mnt/vendor/persist/camera/ois_hall 0770 vendor_tcmd camera
 
+    # Add for OIS hall data
+    mkdir /mnt/vendor/persist/camera/ois_hall_data 0770 vendor_tcmd camera
+
     # Add for fod fps calibration
     chown system system /sys/class/backlight/panel0-backlight/brightness
     chown system system /sys/class/drm/card0-DSI-1/panelName
@@ -53,20 +58,20 @@ on post-fs-data
     chmod 0666 /sys/class/drm/card0-DSI-1/panelName
     chmod 0666 /sys/class/drm/card0-DSI-1/panelId
 
-    #bluetooth sar
-    write /data/vendor/radio/bluetooth_sar disable
-    chmod 0644 /data/vendor/radio/bluetooth_sar
-    chown radio /data/vendor/radio/bluetooth_sar
+    # Add for modem rfs logs
+    rm /data/vendor/radio/read_modem_efs
+    write /data/vendor/radio/read_modem_efs 0
+    chmod 0666 /data/vendor/radio/read_modem_efs
 
 on early-init
-    insmod /vendor/lib/modules/leds_aw99703.ko
-    insmod /vendor/lib/modules/leds_lm3697.ko
-    exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -r -d /vendor/lib/modules/${ro.vendor.mot.gki.path} zram
+   insmod /vendor/lib/modules/leds_aw99703.ko
+   insmod /vendor/lib/modules/leds_lm3697.ko
+   exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -r -d /vendor/lib/modules/${ro.vendor.mot.gki.path} zram
 
 on boot
-    # vibrator hal need to access this sysfs node for AF noise issue
-    chown system system /sys/devices/platform/soc/soc:mot,cam-actuator/onekey_actuator
-    chmod 0660 /sys/devices/platform/soc/soc:mot,cam-actuator/onekey_actuator
+   # vibrator hal need to access this sysfs node for AF noise issue
+   chown system system /sys/devices/platform/soc/soc:mot,cam-actuator/onekey_actuator
+   chmod 0660 /sys/devices/platform/soc/soc:mot,cam-actuator/onekey_actuator
     # change permission for capsensor
     chown system system /sys/class/capsense/reset
     chown system system /sys/class/capsense/int_state
@@ -88,12 +93,10 @@ on boot
     chmod 0660 /sys/class/touchscreen/primary/gesture
     chmod 0660 /sys/class/capsense/mode
     chmod 0666 /dev/gtp_tools
-
-    chmod 0662 /sys/class/leds/vibrator/state
-    chmod 0666 /sys/class/leds/vibrator/activate
-    chmod 0662 /sys/class/leds/vibrator/duration
-    write /proc/sys/vm/dirty_background_bytes 26214400
-    write /proc/sys/vm/dirty_bytes 104857600
+    #bluetooth sar
+    write /data/vendor/radio/bluetooth_sar disable
+    chmod 0644 /data/vendor/radio/bluetooth_sar
+    chown radio /data/vendor/radio/bluetooth_sar
 
 on fs
     insmod /vendor/lib/modules/${ro.vendor.mot.gki.path}/rbs_fod_mmi.ko
@@ -104,6 +107,7 @@ on boot && property:ro.vendor.mot.gki.path=5.4-gki
 on late-init
     insmod /vendor/lib/modules/${ro.vendor.mot.gki.path}/qpnp_adaptive_charge.ko
     insmod /vendor/lib/modules/${ro.vendor.mot.gki.path}/mmi-smbcharger-iio.ko
+    insmod /vendor/lib/modules/${ro.vendor.mot.gki.path}/mmi_parallel_charger_iio.ko
     exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -a -d /vendor/lib/modules/${ro.vendor.mot.gki.path} moto_mm moto_swap
 
 on early-boot
@@ -113,53 +117,42 @@ on early-boot
 
     chown system camera /dev/cci_intf
     chmod 0660 /dev/cci_intf
+on property:ro.boot.mode=mot-factory
+    chmod 0666 /dev/cci_intf
 
 on charger
     insmod /vendor/lib/modules/${ro.vendor.mot.gki.path}/qpnp_adaptive_charge.ko
     insmod /vendor/lib/modules/${ro.vendor.mot.gki.path}/mmi-smbcharger-iio.ko
+    insmod /vendor/lib/modules/${ro.vendor.mot.gki.path}/mmi_parallel_charger_iio.ko
 
 on post-fs-data && property:ro.boot.mode=charger
     setprop persist.vendor.hvdcp_opti.start 1
 
 service capsense_reset /vendor/bin/capsense_reset
-    class core
-    user system
-    group system input
-    disabled
+   class core
+   user system
+   group system input
+   disabled
+
+on property:sys.boot_completed=1
+    start capsense_reset
+
+service vendor.modem-rfs-sh /vendor/bin/init.mmi.modem-rfs.sh loop_forever
+   class late_start
+   user root
+   group log system radio
+   oneshot
+
+on post-fs-data && property:ro.boot.mode=mot-factory
+   #open usb debug log
+   write /sys/kernel/debug/dynamic_debug/control "file gadget.c +p"
+   write /sys/kernel/debug/dynamic_debug/control "file composite.c +p"
+   write /sys/kernel/debug/dynamic_debug/control "file configfs.c +p"
+   write /sys/kernel/debug/dynamic_debug/control "file phy-msm-snps-hs.c +p"
+   write /sys/kernel/debug/dynamic_debug/control "file phy-msm-ssusb-qmp.c +p"
 
 on property:vendor.bluetooth.sar_state=connect
     write /data/vendor/radio/bluetooth_sar connect
 
 on property:vendor.bluetooth.sar_state=disconnect
     write /data/vendor/radio/bluetooth_sar disconnect
-
-on property:sys.boot_completed=1
-    start capsense_reset
-    chown system system /sys/class/touchscreen/primary/stowed
-    chmod 0660 /sys/class/touchscreen/primary/stowed
-
-on init
-    insmod /vendor/lib/modules/${ro.vendor.mot.gki.path}/chipone_tddi_v2_mmi.ko
-    insmod /vendor/lib/modules/${ro.vendor.mot.gki.path}/ilitek_v3_mmi.ko
-
-on init && property:ro.product.is_prc=true && property:ro.vendor.hw.storage=256GB
-    setprop ro.vendor.product.display "moto g34 S"
-    setprop ro.vendor.product.display.plain_text "moto g34 S"
-
-on init && property:ro.product.is_prc=true && property:ro.vendor.hw.storage=128GB
-    setprop ro.vendor.product.display "moto g34"
-    setprop ro.vendor.product.display.plain_text "moto g34"
-
-on property:dev.bootcomplete=1 && property:ro.vendor.hw.ram=4GB
-    write /sys/block/dm-0/queue/read_ahead_kb 128
-    write /sys/block/dm-1/queue/read_ahead_kb 128
-    write /sys/block/dm-2/queue/read_ahead_kb 128
-    write /sys/block/dm-3/queue/read_ahead_kb 128
-    write /sys/block/dm-4/queue/read_ahead_kb 128
-    write /sys/block/dm-5/queue/read_ahead_kb 128
-    write /sys/block/${dev.mnt.dev.root}/queue/read_ahead_kb 128
-    write /sys/block/${dev.mnt.dev.system_ext}/queue/read_ahead_kb 128
-    write /sys/block/${dev.mnt.dev.product}/queue/read_ahead_kb 128
-    write /sys/block/${dev.mnt.dev.vendor}/queue/read_ahead_kb 128
-    write /sys/block/${dev.mnt.dev.data}/queue/read_ahead_kb 128
-    write /sys/block/${dev.mnt.rootdisk.data}/queue/read_ahead_kb 128

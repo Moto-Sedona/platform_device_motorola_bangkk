@@ -9,16 +9,10 @@ persist.vendor.audio.calfile6=/vendor/etc/acdbdata/Headset_cal.acdb
 persist.vendor.audio.calfile7=/vendor/etc/acdbdata/Speaker_cal.acdb
 
 # Bluetooth
-bluetooth.device.default_name=moto g34 5G
+bluetooth.device.default_name=moto g84 5G
 
 # Camera
 persist.vendor.camera.physical.num=3
-
-# Display
-ro.vendor.display.svi=1
-vendor.display.svi.config=1
-ro.vendor.display.sensortype=2
-vendor.display.svi.config_path=/vendor/etc/SVIConfig.xml
 
 # Motorola
 ro.mot.build.customerid=global
@@ -32,8 +26,8 @@ ro.vendor.sensors.prox_for_call=true
 
 # Surfaceflinger
 ro.surface_flinger.has_HDR_display=false
-ro.surface_flinger.has_wide_color_display=false
-ro.surface_flinger.set_idle_timer_ms=200
-ro.surface_flinger.set_touch_timer_ms=1000
+ro.surface_flinger.has_wide_color_display=true
+ro.surface_flinger.set_idle_timer_ms=250
+ro.surface_flinger.set_touch_timer_ms=200
 ro.surface_flinger.use_smart_90_for_video=true
 vendor.hw.sf.IdleLazyResetThresholdT=1000
