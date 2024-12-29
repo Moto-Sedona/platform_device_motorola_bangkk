@@ -56,6 +56,10 @@ PRODUCT_PACKAGES += \
 # Virtual A/B
 TARGET_IS_VAB := true
 
+# Sensors
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/sensors/hals.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/hals.conf
+
 # Shipping API
 PRODUCT_SHIPPING_API_LEVEL := 30
 
